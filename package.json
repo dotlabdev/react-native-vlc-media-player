@@ -18,10 +18,7 @@
     "video"
   ],
   "author": "rmilinda@gmail.com",
-  "dependencies": {
-    "react-native-slider": "^0.11.0",
-    "react-native-vector-icons": "^6.6.0"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/razorRun/react-native-vlc-media-player.git"
