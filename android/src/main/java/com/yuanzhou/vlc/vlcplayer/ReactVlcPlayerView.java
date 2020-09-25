@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,9 +25,7 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import java.util.ArrayList;
-
-
-
+import java.util.Random;
 
 
 @SuppressLint("ViewConstructor")
@@ -95,13 +94,46 @@ class ReactVlcPlayerView extends TextureView implements
         //createPlayer();
     }
 
+    final int min = 100;
+    final int max = 1000;
+    final int random = new Random().nextInt((max - min) + 1) + min;
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        stopPlayback();
+
+
+
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+
+
+        runner.execute();
+
     }
 
     // LifecycleEventListener implementation
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String resp;
+            try {
+                int time = random;
+                Thread.sleep(time);
+                resp = "Slept for random seconds";
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                resp = e.getMessage();
+            }
+            return resp;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            stopPlayback();
+        }
+    }
 
     @Override
     public void onHostResume() {
