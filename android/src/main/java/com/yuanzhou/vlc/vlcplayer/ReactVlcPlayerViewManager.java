@@ -34,7 +34,8 @@ public class ReactVlcPlayerViewManager extends SimpleViewManager<ReactVlcPlayerV
     private static final String PROP_AUTO_ASPECT_RATIO = "autoAspectRatio";
     private static final String PROP_CLEAR = "clear";
     private static final String PROP_PROGRESS_UPDATE_INTERVAL = "progressUpdateInterval";
-
+    private static final String PROP_STOP = "stopVLC";
+    private static final String PROP_START = "startVLC";
 
     @Override
     public String getName() {
@@ -58,6 +59,15 @@ public class ReactVlcPlayerViewManager extends SimpleViewManager<ReactVlcPlayerV
             builder.put(event, MapBuilder.of("registrationName", event));
         }
         return builder.build();
+    }
+
+    @ReactProp(name = PROP_STOP)
+    public void setStop(final ReactVlcPlayerView videoView, final boolean stop) {
+        videoView.setStop();
+    }
+    @ReactProp(name = PROP_START)
+    public void setStart(final ReactVlcPlayerView videoView, final boolean start) {
+        videoView.setStart();
     }
 
     @ReactProp(name = PROP_CLEAR)
