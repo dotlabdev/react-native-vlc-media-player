@@ -108,7 +108,7 @@ class VideoEventEmitter {
         error.putString(EVENT_PROP_ERROR_EXCEPTION, exception.getMessage());
         WritableMap event = Arguments.createMap();
         event.putMap(EVENT_PROP_ERROR, error);
-        //receiveEvent(EVENT_ERROR, event);
+        receiveEvent(EVENT_ON_ERROR, event);
     }
 
     /**

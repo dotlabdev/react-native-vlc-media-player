@@ -105,34 +105,15 @@ class ReactVlcPlayerView extends TextureView implements
 
     @Override
     public void onHostResume() {
+        // THIS NEVER WORKED, IF IT WOULD THEN NO NEED FOR THE THE APP STATE LISTENER IN THE JS
         Log.d(TAG, "onHostResume: ");
-//        if (mMediaPlayer != null && isSurfaceViewDestory && isHostPaused) {
-//            IVLCVout vlcOut = mMediaPlayer.getVLCVout();
-//            if (!vlcOut.areViewsAttached()) {
-//                // vlcOut.setVideoSurface(this.getHolder().getSurface(), this.getHolder());
-//                vlcOut.attachViews(onNewVideoLayoutListener);
-//                isSurfaceViewDestory = false;
-//                isPaused = false;
-//                // this.getHolder().setKeepScreenOn(true);
-//                mMediaPlayer.play();
-//            }
-//        }
     }
 
 
     @Override
     public void onHostPause() {
-//        Log.d(TAG, "onHostPause: ");
-//        if (!isPaused && mMediaPlayer != null) {
-//            isPaused = true;
-//            isHostPaused = true;
-//            mMediaPlayer.pause();
-//            // this.getHolder().setKeepScreenOn(false);
-//            WritableMap map = Arguments.createMap();
-//            map.putString("type", "Paused");
-//            eventEmitter.onVideoStateChange(map);
-//        }
-        Log.d("onHostPause", "---------onHostPause------------>");
+        // THIS NEVER WORKED, IF IT WOULD THEN NO NEED FOR THE THE APP STATE LISTENER IN THE JS
+        Log.d(TAG, "onHostResume: ");
     }
 
 
@@ -324,13 +305,11 @@ class ReactVlcPlayerView extends TextureView implements
     }
 
     private void createPlayer(boolean autoplayResume, boolean isResume) {
-        releasePlayer();
         if (this.getSurfaceTexture() == null) {
-            Log.d(TAG, "createPlayer: surface null");
             return;
         }
         try {
-            Log.d(TAG, "createPlayer: surface good");
+            releasePlayer();
 
             final ArrayList<String> cOptions = new ArrayList<>();
             String uriString = srcMap.hasKey("uri") ? srcMap.getString("uri") : null;
@@ -417,22 +396,31 @@ class ReactVlcPlayerView extends TextureView implements
             setProgressUpdateRunnable();
         } catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(getContext(), "Error creating player!", Toast.LENGTH_LONG).show();
         }
     }
 
     private void releasePlayer() {
-        if (libvlc == null)
-            return;
-        mMediaPlayer.stop();
-        final IVLCVout vout = mMediaPlayer.getVLCVout();
-        vout.removeCallback(callback);
-        vout.detachViews();
-        //surfaceView.removeOnLayoutChangeListener(onLayoutChangeListener);
-        libvlc.release();
-        libvlc = null;
-        if (mProgressUpdateRunnable != null) {
-            mProgressUpdateHandler.removeCallbacks(mProgressUpdateRunnable);
+        try {
+            if (libvlc == null)
+                return;
+            if (mMediaPlayer == null)
+                return;
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.release();
+            final IVLCVout vout = mMediaPlayer.getVLCVout();
+            vout.removeCallback(callback);
+            vout.detachViews();
+            libvlc.release();
+            libvlc = null;
+            mMediaPlayer=null;
+            if (mProgressUpdateRunnable != null) {
+                mProgressUpdateHandler.removeCallbacks(mProgressUpdateRunnable);
+            }
+        } catch (Exception e) {
+            eventEmitter.error("Failed to release", new Exception("Failed to release"));
+            e.printStackTrace();
         }
     }
 
